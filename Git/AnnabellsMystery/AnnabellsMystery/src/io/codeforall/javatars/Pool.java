@@ -23,6 +23,8 @@ public class Pool implements Investigate {
 
     @Override
     public void investigate() {
+        Graphics.graphicPool();
+        Graphics.graphicSwimmingPoolTitle();
         printMessage(Messages.POOL_INVESTIGATION_MESSAGE);
 
         printMessage(Messages.POOL_INTRODUCTION);

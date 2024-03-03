@@ -12,6 +12,8 @@ public class Kitchen implements Investigate {
 
     @Override
     public void investigate() {
+        Graphics.graphicKitchenTitle();
+        Graphics.graphicKitchen();
         printMessage(Messages.KITCHEN_INVESTIGATION);
 
         StringInputScanner finalMessage = new StringInputScanner();

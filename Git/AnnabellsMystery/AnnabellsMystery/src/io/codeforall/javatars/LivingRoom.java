@@ -22,6 +22,8 @@ public class LivingRoom implements Investigate {
 
     @Override
     public void investigate() {
+        Graphics.graphicLivingRoom();
+        Graphics.graphicLivingRoomTitle();
         printMessage(LIVING_ROOM_INVESTIGATION_MESSAGE);
         printMessage(LIVING_ROOM_INTRODUCTION);
 

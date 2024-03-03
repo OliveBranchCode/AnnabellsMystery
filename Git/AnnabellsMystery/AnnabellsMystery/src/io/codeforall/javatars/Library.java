@@ -22,6 +22,8 @@ public class Library implements Investigate{
 
     @Override
     public void investigate() {
+        Graphics.graphicLibrary();
+        Graphics.graphicLibraryTitle();
         printMessage(Messages.LIBRARY_INVESTIGATION_MESSAGE);
 
         printMessage(Messages.LIBRARY_INTRODUCTION_MESSAGE);

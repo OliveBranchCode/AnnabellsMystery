@@ -6,6 +6,7 @@ public class GameRoom implements Investigate {
 
     @Override
     public void investigate() {
-
+        Graphics.graphicGameRoom();
+        Graphics.graphicGameRoomTitle();
     }
 }
