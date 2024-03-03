@@ -10,12 +10,16 @@ public class Server {
     private static final int PORT = 9090;
     private static final int MAX_PLAYERS = 2;
     private final ConcurrentHashMap<Socket, PrintWriter> clients = new ConcurrentHashMap<>();
-    private volatile boolean acceptingClients = true;
     private int connectedPlayers = 0;
 
     public void start() {
+
+        Graphics.mainTitle();
+
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server started on port " + PORT);
+
+            boolean acceptingClients = true;
 
             while (acceptingClients) {
                 Socket clientSocket = serverSocket.accept();
@@ -51,6 +55,8 @@ public class Server {
             try {
                 this.writer = new PrintWriter(clientSocket.getOutputStream(), true);
                 clients.put(clientSocket, writer);
+
+                Graphics.mainTitle();
             } catch (IOException e) {
                 throw new RuntimeException("Error getting output stream", e);
             }
@@ -65,7 +71,19 @@ public class Server {
                 throw new RuntimeException(e);
             } finally {
                 clients.remove(clientSocket);
+                closeConnectionIfPoliceCalled();
             }
         }
+
+        private void closeConnectionIfPoliceCalled() {
+            if (writer.checkError()) {
+                System.out.println("Client disconnected.");
+                clients.remove(clientSocket);
+            }
+        }
+        private void sendMessage(String message) {
+            writer.println(message);
+        }
     }
+
 }
