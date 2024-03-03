@@ -3,41 +3,54 @@ package io.codeforall.javatars;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Server {
 
     private static final int PORT = 9090;
     private static final int MAX_PLAYERS = 2;
-    private final ConcurrentHashMap<Socket, PrintWriter> clients = new ConcurrentHashMap<>();
+    private final Map<Socket, PrintWriter> clients = new ConcurrentHashMap<>();
     private int connectedPlayers = 0;
 
     public void start() {
-
-        Graphics.mainTitle();
-
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server started on port " + PORT);
 
-            boolean acceptingClients = true;
-
-            while (acceptingClients) {
+            while (connectedPlayers < MAX_PLAYERS) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New connection: " + clientSocket);
 
-                if (connectedPlayers >= MAX_PLAYERS) {
-                    System.out.println("Maximum number of players reached.");
-                    clientSocket.close();
-                    continue;
-                }
-
                 connectedPlayers++;
+
+                PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
+                clients.put(clientSocket, writer);
 
                 Thread clientThread = new Thread(new ClientHandler(clientSocket));
                 clientThread.start();
             }
+
+            startChat();
+            startGame();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void startChat() {
+        for (Socket socket : clients.keySet()) {
+            PrintWriter writer = clients.get(socket);
+            writer.println("Chat started! You can now chat with the other player.");
+        }
+    }
+
+    private void startGame() {
+        for (Socket socket : clients.keySet()) {
+            try {
+                new Thread(new AnnabellsHouse(socket, clients)).start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -48,42 +61,28 @@ public class Server {
 
     private class ClientHandler implements Runnable {
         private final Socket clientSocket;
-        private final PrintWriter writer;
+        private final BufferedReader reader;
 
-        public ClientHandler(Socket clientSocket) {
+        public ClientHandler(Socket clientSocket) throws IOException {
             this.clientSocket = clientSocket;
-            try {
-                this.writer = new PrintWriter(clientSocket.getOutputStream(), true);
-                clients.put(clientSocket, writer);
-
-                Graphics.mainTitle();
-            } catch (IOException e) {
-                throw new RuntimeException("Error getting output stream", e);
-            }
+            this.reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         }
 
         @Override
         public void run() {
             try {
-                AnnabellsHouse annabellsHouse = new AnnabellsHouse(clientSocket, clients);
-                annabellsHouse.start();
+                String message;
+                while ((message = reader.readLine()) != null) {
+                    for (Socket socket : clients.keySet()) {
+                        if (socket != clientSocket) {
+                            PrintWriter writer = clients.get(socket);
+                            writer.println("Jogador: " + message);
+                        }
+                    }
+                }
             } catch (IOException e) {
-                throw new RuntimeException(e);
-            } finally {
-                clients.remove(clientSocket);
-                closeConnectionIfPoliceCalled();
+                e.printStackTrace();
             }
-        }
-
-        private void closeConnectionIfPoliceCalled() {
-            if (writer.checkError()) {
-                System.out.println("Client disconnected.");
-                clients.remove(clientSocket);
-            }
-        }
-        private void sendMessage(String message) {
-            writer.println(message);
         }
     }
-
 }

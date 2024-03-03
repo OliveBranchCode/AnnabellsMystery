@@ -1,11 +1,13 @@
 package io.codeforall.javatars;
-
-import java.io.*;
-import java.net.Socket;
-import java.util.Map;
 import org.academiadecodigo.bootcamp.Prompt;
 import org.academiadecodigo.bootcamp.scanners.menu.MenuInputScanner;
 import org.academiadecodigo.bootcamp.scanners.string.StringInputScanner;
+
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Map;
 
 public class AnnabellsHouse implements Runnable {
 
@@ -23,12 +25,11 @@ public class AnnabellsHouse implements Runnable {
 
     @Override
     public void run() {
-        printMessage(Messages.HOUSE_INTRODUCTION);
         start();
     }
 
     public void start() {
-
+        printMessage(Messages.HOUSE_INTRODUCTION);
         String username = askUserName(Messages.HOUSE_ASK_NAME);
 
         String gender = askUserGender();
