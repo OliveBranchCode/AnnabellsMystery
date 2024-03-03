@@ -23,6 +23,8 @@ public class Garden  implements Investigate{
 
     @Override
     public void investigate() {
+        Graphics.graphicGarden();
+        Graphics.graphicGardenTitle();
         printMessage(Messages.GARDEN_INVESTIGATION_MESSAGE);
 
         printMessage(Messages.GARDEN_INTRODUCTION_MESSAGE);

@@ -25,6 +25,8 @@ public class Office implements Investigate {
 
     @Override
     public void investigate() {
+        Graphics.graphicOffice();
+        Graphics.graphicOfficeTitle();
         printMessage(Messages.OFFICE_ENTERING_MESSAGE);
 
         printMessage(Messages.OFFICE_INTRODUCTION);

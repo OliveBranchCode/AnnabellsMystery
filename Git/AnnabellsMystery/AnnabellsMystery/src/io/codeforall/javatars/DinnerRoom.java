@@ -24,6 +24,8 @@ public class DinnerRoom implements Investigate{
 
     @Override
     public void investigate() {
+        Graphics.graphicDinnerRoom();
+        Graphics.graphicDinnerRoomTitle();
         printMessage(Messages.DINNER_ENTERING_MESSAGE);
 
         printMessage(Messages.DINNER_INTRODUCTION);
