@@ -1,5 +1,6 @@
 package io.codeforall.javatars;
 
 public interface Investigate {
-    void investigate() throws InterruptedException;
+
+    void investigate();
 }
